@@ -80,7 +80,7 @@ First, let's take a look at the distribution of the players' damage dealt to cha
 <iframe
   src="assets/dmg_plot.html"
   width="800"
-  height="600"
+  height="400"
   frameborder="0"
 ></iframe>
 
@@ -91,7 +91,7 @@ Next, let's look at the distribution of total creep score (CS).
 <iframe
   src="assets/cs_plot.html"
   width="800"
-  height="600"
+  height="400"
   frameborder="0"
 ></iframe>
 
@@ -104,7 +104,7 @@ Let's take a look at the gold distribution within each position.
 <iframe
   src="assets/gold_dist_plot.html"
   width="800"
-  height="600"
+  height="400"
   frameborder="0"
 ></iframe>
 
