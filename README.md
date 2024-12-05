@@ -134,7 +134,7 @@ An additional column that we could add to make these columns' data Missing At Ra
 
 ## Hypothesis Testing
 
-The following hypothesis test aims to assess whether Azir, on average, deals more damage than other mid laners. Dealing high damage is one way to have a positive influence in the game, so this investigation is significant in gauging Azir's effectiveness on the rift. 
+The following hypothesis test aims to assess whether Azir, on average, deals more damage than other mid laners. Dealing high damage can have a positive influence in the game, so this investigation is significant in gauging Azir's effectiveness on the rift. 
 
 **Null Hypothesis**: On average, Azir does just as much damage to champions as other mid laners.
 
@@ -142,7 +142,18 @@ The following hypothesis test aims to assess whether Azir, on average, deals mor
 
 **Test Statistic**: Difference in means between Azir's average damage and other mid laner's average damage.
 
-Significance level: 5%
+**Significance Level**: 5%
+
+A permutation test was run to test the two hypotheses. The **observed statistic** for this test is **642.7805324519832**. Below is the empirical distribution of the test statistic.
+
+<iframe
+  src="assets/dmg_emp_dist.html"
+  width="800"
+  height="400"
+  frameborder="0"
+></iframe>
+
+The permutation test yielded a **p-value** of **0.01521**, so we **reject the null hypothesis**. The results suggest that, on average, Azir does more damage to champions compared to other mid laners. This finding may bring to consideration that for mid laners, dealing high damage is one of many ways to be effective in a game. 
 
 ## Framing a Prediction Problem
 
