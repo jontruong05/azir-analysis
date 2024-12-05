@@ -68,24 +68,33 @@ First, let's take a look at the distribution of the players' damage dealt to cha
 
 <iframe
   src="assets/dmg_plot.html"
-  width="800"
-  height="600"
+  width="1000"
+  height="800"
   frameborder="0"
 ></iframe>
+
+The distribution appears to be normal and skewed right, and the mean damage that players dealt to champions is around 16,000. A reason for the right skew is that there are champions who are designed to deal high damage, while there are other champions who can be useful without dealing a lot of damage.
+
+
+Next, let's look at the distribution of total creep score (CS).
 
 <iframe
   src="assets/cs_plot.html"
-  width="800"
-  height="600"
+  width="1000"
+  height="800"
   frameborder="0"
 ></iframe>
 
+The distribution appears to be bimodal. In a typical game of League of Legends, the support player usually forgoes killing minions and monsters, letting their teammates do it instead. This results in support players having a much lower CS compared to their teammates. Therefore, the left peak is likely representing the many support players having low CS, while the right peak is likely representing the distribution of CS of non-support players.
+
 ### Bivariate Analysis
+
+Let's take a look at the gold distribution within each position.
 
 <iframe
   src="assets/gold_dist_plot.html"
-  width="800"
-  height="600"
+  width="1000"
+  height="800"
   frameborder="0"
 ></iframe>
 
