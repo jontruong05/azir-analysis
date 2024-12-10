@@ -136,11 +136,11 @@ An additional column that we could add to make these columns' data Missing At Ra
 
 The following hypothesis test aims to assess whether Azir, on average, deals more damage than other mid laners. Dealing high damage can have a positive influence in the game, so this investigation is significant in gauging Azir's effectiveness on the rift. 
 
-**Null Hypothesis**: On average, Azir does just as much damage to champions as other mid laners.
+**Null Hypothesis**: Azir does just as much damage to champions as other mid laners.
 
-**Alternative Hypothesis**: On average, Azir does more damage to champions as other mid laners.
+**Alternative Hypothesis**: Azir does more damage to champions as other mid laners.
 
-**Test Statistic**: Difference in means between Azir's average damage and other mid laner's average damage.
+**Test Statistic**: Difference in means between Azir's average damage and other mid laners' average damage.
 
 **Significance Level**: 5%
 
@@ -153,11 +153,15 @@ A permutation test was run to test the two hypotheses. The **observed statistic*
   frameborder="0"
 ></iframe>
 
-The permutation test yielded a **p-value** of **0.01521**, so we **reject the null hypothesis**. The results suggest that, on average, Azir does more damage to champions compared to other mid laners. This finding may bring to consideration that for mid laners, dealing high damage is one of many ways to be effective in a game. 
+The permutation test yielded a **p-value** of **0.01521**, so we **reject the null hypothesis**. The results suggest that Azir may be dealing more damage to champions compared to other mid laners. This finding may bring to consideration that for mid laners, dealing high damage is one of many ways to be effective in a game. 
 
 ## Framing a Prediction Problem
 
+In the previous section, we discovered that Azir may be dealing more damage than other mid laners. Since dealing damage is one way of being effective in a game of League of Legends, it may be worth considering if Azir's damage dealt to champions could be a good indicator of determining his chances of winning. 
 
+Machine learning techniques can be used for the following prediction problem: **Can we predict if Azir wins or loses a game based on his game statistics?**
+
+For this problem, the model will be a binary classifier. The response variable will be `result`, which indicates whether Azir's game was won (1) or lost (0). The `result` column of the dataset is used as the response variable because game statistics are representative of performance, and it is reasonable to think that high performance may be indicative of game outcomes due to the influence the player can have on the game. At the time of prediction, we only know the following information about each of Azir's games: `kills`, `deaths`, `assists`, `damagetochampions`, `totalgold`, `totalcs`, and `side`. The binary classifier will be trained on these features.
 
 ## Baseline Model
 
