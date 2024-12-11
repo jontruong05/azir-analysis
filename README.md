@@ -170,7 +170,7 @@ Below is a plot that shows the empirical distribution of the absolute difference
   frameborder="0"
 ></iframe>
 
-The observed absolute difference in means is **177.12205775476036**. 
+The **observed absolute difference in means** is **177.12205775476036**. 
 This permutation test yielded a **p-value** of **0**, so we reject the null hypothesis.
 This means that the missingness of `killsat25` relies on `gamelength`. 
 
@@ -193,7 +193,7 @@ Below is a plot that shows the empirical distribution of the TVDs.
   frameborder="0"
 ></iframe>
 
-The observed TVD is **0**. 
+The **observed TVD** is **0**. 
 This permutation test yielded a **p-value** of **1**, so we fail to reject the null hypothesis.
 This means that the missingness of `killsat25` does not rely on `side`. 
 
@@ -243,11 +243,56 @@ The binary classifier will be trained on these features.
 
 ## Baseline Model
 
-
+For the baseline model, a Random Forest Classifier was used to train on three features: `kills`, `deaths`, and `assists`.
+All of the three features are quantitative data, and all of them were standardized using the StandardScaler transformer. 
+This was done so that larger counts of `kills`, `deaths`, and `assists` simply due to longer games would not adversely affect the model's predictions.
+After creating the training set using 75% of the data and training the model on it, its model accuracy on the training data was 0.9219.
+This means that the classifier was able to correctly predict the results of 92.19% of games in the training set. 
+Furthermore, the classifier was able to correctly predict the results of 85.53% of games in the testing set. 
+For the first attempt, this model is able to achieve quite a high accuracy. 
+`kills`, `deaths`, and `assists` are common metrics to evaluate the performance of a player.
 
 ## Final Model
 
+For the final model, a new Random Forest Classifier was used to train on the three features mentioned in the baseline model, plus four more features: `damagetochampions`, `totalgold`, `totalcs`, and `side`.
+`damagetochampions`, `totalgold`, and `totalcs` give us an even better idea on how a player performed.
+They can be used in conjunction with `kills`, `deaths`, and `assists`, offering the model more predictive power. 
+Furthermore, the `side` that a player plays on can have an impact on the outcome of the match.
+Although the map is designed to be symmetrical, professional players have noted that the blue side may be slightly advantageous.
 
+The hyperparameters of the model were `max_depth`, `min_samples_split`, and `criterion`.
+Depths from 1 to 10, minimum sample sizes from 2 to 5, and the criterion being gini or entropy were values that were tested for the hyperparameters.
+A GridSearchCV with a 5-fold cross validation was used to find the best hyperparameters for the Random Forest Classifier.
+
+When evaluating this model's accuracy on the training set and testing set (which also used a 75-25 split), 
+the model accuracy was 97.16% on the training set and 87.02% on the testing set. 
+This means that the four new features that were added are good adjustments to the model, since the model accuracy for both training and test sets have increased.
 
 ## Fairness Analysis
 
+Lastly, we want to know if our model is fair among different groups. 
+The group will be defined as the `side` played, so we want to answer the following: "Does my model perform worse for Azir players on red side than it does for Azir players on blue side?"
+
+In this scenario, group `X` represents Azir players on red side, while group `Y` represents Azir players on blue side.
+We will determine whether the model constructed in the previous section is fair or not by performing a permutation test. 
+
+**Null Hypothesis**: The model is fair. Its accuracy for Azir on red side is the same as the accuracy for Azir on blue side.
+
+**Alternative Hypothesis**: The model is not fair. Its accuracy for Azir on red side is not the same as the accuracy for Azir on blue side.
+
+**Test Statistic**: Difference in accuracy between Azir on red side and Azir on blue side.
+
+**Significance Level**: 5%
+
+Below is a plot that shows the empirical distribution of the differences in accuracy.
+
+<iframe
+  src="assets/accuracy_dist.html"
+  width="800"
+  height="400"
+  frameborder="0"
+></iframe>
+
+The **observed difference in accuracy** is **0.00047121768326685576**.
+This permutation test yielded a **p-value** of **0.367**, so we fail to reject the null hypothesis.
+This means that the final model is fair, making predictions for both blue-sided and red-sided Azir players with statistically similar accuracy.
