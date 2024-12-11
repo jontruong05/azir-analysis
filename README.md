@@ -8,7 +8,7 @@ This project uses performance stats to reason whether Azir, one of many playable
 
 League of Legends (LoL) is a popular multiplayer online battle arena (MOBA) developed by Riot Games. 
 With a playerbase of millions of people, it is the most popular esport in the world. 
-The dataset that this project uses is maintained by Oracle’s Elixir. 
+The dataset that this project uses is maintained by Oracle's Elixir. 
 It contains a wealth of information from all professional LoL esports games in 2024. 
 
 Azir is a unique, yet difficult champion known for his high damage and team fighting potential. 
@@ -124,10 +124,10 @@ Below is an aggregation that was performed on the cleaned dataset:
 | position | dpm    | total cs | totalgold | kills | deaths | assists |
 |----------|--------|----------|-----------|-------|--------|---------|
 | mid      | 682.56 | 277.55   | 13364.12  | 3.91  | 2.69   | 5.94    |
-| bot      | 680.96 | 278.89   | 13787.34  | 4.58  | 2.56   | 5.70    |
+| bot      | 680.88 | 278.90   | 13787.41  | 4.58  | 2.56   | 5.70    |
 | top      | 549.95 | 246.91   | 12272.30  | 2.85  | 3.03   | 5.17    |
-| jng      | 405.14 | 188.13   | 11018.00  | 2.76  | 3.16   | 7.94    |
-| sup      | 204.22 | 43.19    | 811.34    | 0.91  | 3.61   | 9.83    |
+| jng      | 405.16 | 188.13   | 11018.33  | 2.76  | 3.16   | 7.94    |
+| sup      | 204.22 | 43.20    | 8114.54   | 0.91  | 3.61   | 9.83    |
 
 The cleaned dataset was grouped by `position` and aggregated by using the mean function on the columns `dpm`, `total cs`, `totalgold`, `kills`, `deaths`, and `assists`. 
 From this aggregated dataset, we can see that mid and bot laners are generally dealing more damage per minute, earning a higher total CS, earning more gold, scoring more kills, and having less deaths and assists. 
@@ -138,9 +138,64 @@ However, this does not necessarily mean that top, jungle, or support players are
 
 ### NMAR Analysis
 
-In the dataset, it is believed that the columns `pick1`, `pick2`, `pick3`, `pick4`, and `pick5` are all data that are Not Missing at Random (NMAR). For any game, each team must pick five champions, and they do not have to be in positional order (top, jungle, mid, bottom, support). It would be reasonable to think that no games should have any missing data on the pick order of champions. Given this, it does not seem like these columns follow any trend of missingness. There is also no evidence that the missingness of the data in these columns rely on the data from other columns. Since Oracle's Elixir is widely consulted to conduct analyses, it is plausible that certain teams do not want to have their pick orders to be easily obtainable online. Pick orders can allow analysts from other teams to figure out the strengths, weaknesses, and strategies of certain teams. This is crucial information for opponents in the middle of a tournament, so teams may consider it beneficial to keep it as hidden as possible.
+In the original dataset, the columns `ban1`, `ban2`, `ban3`, `ban4`, and `ban5` appear to be data that are Not Missing at Random (NMAR).
+The missingness of these columns do not appear to be tied to other columns in the dataset, but the missingness does not appear to be random, either.
+Before the game starts, each team is allowed to ban at most five champions. 
+Most teams would ideally use all five bans so they can avoid having to play against champions they struggle with.
+However, some teams may be feeling confident or simply forget to ban. 
+Therefore, the missingness of these values actually depend on themselves.
+To turn these columns into data that are Missing at Random (MAR), we can craft a binary column called `fully_banned`, where 1 represents that a team used all of their bans and 0 represents that a team did not use all of their bans.
+This addition makes the missingness of `ban1`, `ban2`, `ban3`, `ban4`, and `ban5` reliant on `fully_banned`. 
 
-An additional column that we could add to make these columns' data Missing At Random (MAR) is `pick_order`, which contains integers from 1 to 5 (inclusive), that represent the order that the champion was picked. 
+### Missingness Dependency
+
+We will perform some permutation tests to determine whether the missing data in the column `killsat25` depends on other columns.
+
+First, let's see if `killsat25` depends on the column `gamelength`.
+
+**Null Hypothesis**: The distribution of `gamelength` when `killsat25` is missing is the same as the distribution of `gamelength` when `killsat25` is not missing.
+
+**Alternative Hypothesis**: The distribution of `gamelength` when `killsat25` is missing is NOT the same as the distribution of `gamelength` when `killsat25` is not missing.
+
+**Test Statistic**: Absolute difference in means between `gamelength` with missing `killsat25` values and `gamelength` with non-missing `killsat25` values.
+
+**Significance Level**: 5%
+
+Below is a plot that shows the empirical distribution of the absolute differences in means.
+
+<iframe
+  src="assets/missingness_1.html"
+  width="800"
+  height="400"
+  frameborder="0"
+></iframe>
+
+The observed absolute difference in means is **177.12205775476036**. 
+This permutation test yielded a **p-value** of **0**, so we reject the null hypothesis.
+This means that the missingness of `killsat25` relies on `gamelength`. 
+
+Next, let's see if `killsat25` depends on the column `side`. 
+
+**Null Hypothesis**: The distribution of `side` when `killsat25` is missing is the same as the distribution of `side` when `killsat25` is not missing.
+
+**Alternative Hypothesis**: The distribution of `side` when `killsat25` is missing is NOT the same as the distribution of `side` when `killsat25` is not missing.
+
+**Test Statistic**: Total Variation Distance
+
+**Significance Level**: 5%
+
+Below is a plot that shows the empirical distribution of the TVDs.
+
+<iframe
+  src="assets/missingness_2.html"
+  width="800"
+  height="400"
+  frameborder="0"
+></iframe>
+
+The observed TVD is **0**. 
+This permutation test yielded a **p-value** of **1**, so we fail to reject the null hypothesis.
+This means that the missingness of `killsat25` does not rely on `side`. 
 
 ## Hypothesis Testing
 
@@ -180,6 +235,8 @@ Machine learning techniques can be used for the following prediction problem: **
 For this problem, the model will be a binary classifier. 
 The response variable will be `result`, which indicates whether Azir's game was won or lost. 
 The `result` column of the dataset is used as the response variable because game statistics are representative of performance, and it is reasonable to think that high performance can influence game outcomes. 
+We will use model accuracy to evaluate the binary classifier. 
+We use model accuracy because we are not working with imbalanced data–the difference between the number of games won and the number of games lost is not very large.
 
 At the time of prediction, we only know the following information about each of Azir's games: `kills`, `deaths`, `assists`, `damagetochampions`, `totalgold`, `totalcs`, and `side`. 
 The binary classifier will be trained on these features.
